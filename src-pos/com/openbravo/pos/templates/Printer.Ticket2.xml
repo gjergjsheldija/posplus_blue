@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<output>
+    <display>
+        <line>
+            <text align="left" length="10">Total.</text>
+            <text align="right" length="10">${ticket.printTotal()}</text>
+        </line>
+        <line>
+            <text align="center" length="20">Thank you.</text>
+        </line>
+    </display>
+    #foreach ($paymentline in $ticket.payments)      
+     #if ($paymentline.name == "cash")
+    <opendrawer/>
+     #end
+     #if ($paymentline.name == "cashrefund")
+    <opendrawer/>
+     #end  
+    #end
+</output>

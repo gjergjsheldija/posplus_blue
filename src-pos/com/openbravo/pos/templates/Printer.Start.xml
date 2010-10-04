@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<output>
+    <display animation="scroll">
+        <line>
+            <text>OpenPOS</text>
+        </line>
+        <line>
+            <text>   Welcome   </text>
+        </line>
+    </display>
+</output>
