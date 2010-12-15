@@ -27,8 +27,8 @@ import com.openbravo.beans.LocaleResources;
  */
 public class AppLocal {
     
-    public static final String APP_NAME = "POSplus";
-    public static final String APP_ID = "posplus";
+    public static final String APP_NAME = "POSplus_BLUE";
+    public static final String APP_ID = "posplus_blue";
     public static final String APP_VERSION = "2.30";
   
     // private static List<ResourceBundle> m_messages;

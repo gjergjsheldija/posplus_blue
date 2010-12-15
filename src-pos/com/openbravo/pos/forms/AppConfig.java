@@ -211,5 +211,8 @@ public class AppConfig implements AppProperties {
         m_propsconfig.setProperty("mail.password", "");
         m_propsconfig.setProperty("mail.sendto", "");
         //--Email
+        m_propsconfig.setProperty("user.username","Testing User");
+        m_propsconfig.setProperty("user.comapany","Testing Company");
+        m_propsconfig.setProperty("user.license","");
     }
 }

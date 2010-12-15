@@ -28,6 +28,10 @@ import com.openbravo.pos.instance.InstanceManager;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import util.Util;
+import java.security.*;
+import java.util.prefs.Preferences;
+
 /**
  *
  * @author  adrianromero
@@ -39,6 +43,10 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
     
     private JRootApp m_rootapp;
     private AppProperties m_props;
+
+    public static final int TOTAL_RUNS = 50;
+    public static final int TIMES_RUN = 0;
+    public static final String PREF_KEY = "exec_time";
     
     /** Creates new form JRootFrame */
     public JRootFrame() {
@@ -51,6 +59,8 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
         m_props = props;
         
         m_rootapp = new JRootApp();
+        boolean demo = true;
+        int execTimes = RegistryValue();
         
         if (m_rootapp.initApp(m_props)) {
 
@@ -69,8 +79,38 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
             try {
                 this.setIconImage(ImageIO.read(JRootFrame.class.getResourceAsStream("/com/openbravo/images/favicon.png")));
             } catch (IOException e) {
-            }   
-            setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION);
+            }  
+            
+            Long cpuId = Util.getMacAddressLong();
+            String licenseNumber = m_props.getProperty("user.license");
+            String username = m_props.getProperty("user.username");
+            String licenseCheck = plainStringToMD5(cpuId.toString() + username);
+
+            if(licenseNumber.compareTo(licenseCheck) == 0){
+                demo = false;
+            } else {
+                if(execTimes == 1) {
+                    javax.swing.JOptionPane.showConfirmDialog((java.awt.Component) null,
+                            "Kjo eshte hera e FUNDIT qe programi ekzekutohet!\n"
+                            + "Per me shume kontaktoni : info@acme-tech.net",
+                            "Informacion rreth licenses",
+                    javax.swing.JOptionPane.DEFAULT_OPTION);
+                }else if(execTimes == 0) {
+                    m_rootapp.tryToClose();
+                } else {
+                    javax.swing.JOptionPane.showConfirmDialog((java.awt.Component) null,
+                            "Kan mbetur edhe " + execTimes + " ekzekutime para se programi te mbyllet!\n"
+                            + "Per me shume kontaktoni : info@acme-tech.net",
+                            "Informacion rreth licenses",
+                    javax.swing.JOptionPane.DEFAULT_OPTION);
+                }
+            }
+
+            if(demo == true) {
+                setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION + " - VERSION DEMOSTRATIV" + " - Ekzekutime te mbetura : " + execTimes);
+            } else {
+                setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION + " - Licensuar : " +  username);
+            }
             pack();
             setLocationRelativeTo(null);        
             
@@ -79,7 +119,43 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
             new JFrmConfig(props).setVisible(true); // Show the configuration window.
         }
     }
-    
+
+    public int RegistryValue() {
+
+        // HKLM\Software\JavaSoft\Prefs\
+        Preferences systemPref = Preferences.systemRoot();
+
+        int timesrun = systemPref.getInt(PREF_KEY,TIMES_RUN);
+        systemPref.putInt(PREF_KEY, timesrun + 1);
+
+        return TOTAL_RUNS - systemPref.getInt(PREF_KEY, TIMES_RUN);
+    }
+
+    public String plainStringToMD5(String input) { // Some stuff we will use later
+        MessageDigest md = null;
+        byte[] byteHash = null;
+        StringBuffer resultString = new StringBuffer();
+        // Bad things can happen here
+        try { // Choose between MD5 and SHA1
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("NoSuchAlgorithmException caught!");
+            System.exit(-1);
+        }
+        // Reset is always good
+        md.reset();
+        // We really need some conversion here
+        md.update(input.getBytes());
+        // There goes the hash
+        byteHash = md.digest();
+        // Now here comes the best part
+        for (int i = 0; i < byteHash.length; i++) {
+            resultString.append(Integer.toHexString(0xFF & byteHash[i]));
+        }
+        // That's it!
+        return (resultString.toString());
+    }
+
     public void restoreWindow() throws RemoteException {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

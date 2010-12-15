@@ -33,7 +33,7 @@ import javax.swing.SwingUtilities;
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.api.SubstanceSkin;
 import org.jvnet.substance.skin.SkinInfo;
-
+import util.Util;
 /**
  *
  * @author adrianromero
@@ -275,7 +275,13 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
     }
 
     public void loadProperties(AppConfig config) {
-
+        Long cpuId = Util.getMacAddressLong();
+        jtxtMachineHostname.setText(config.getProperty("machine.hostname"));
+        jtxtUserName.setText(config.getProperty("user.username"));
+        jtxtCompany.setText(config.getProperty("user.comapany"));
+        jtxtMachineID.setText(cpuId.toString());
+        jtxtLicenseNumber.setText(config.getProperty("user.license"));
+        
         jtxtMachineHostname.setText(config.getProperty("machine.hostname"));
 
         String lafclass = config.getProperty("swing.defaultlaf");
@@ -386,6 +392,9 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
     public void saveProperties(AppConfig config) {
 
         config.setProperty("machine.hostname", jtxtMachineHostname.getText());
+        config.setProperty("user.username", jtxtUserName.getText());
+        config.setProperty("user.comapany", jtxtCompany.getText());
+        config.setProperty("user.license", jtxtLicenseNumber.getText());
 
         LAFInfo laf = (LAFInfo) jcboLAF.getSelectedItem();
         config.setProperty("swing.defaultlaf", laf == null
@@ -608,6 +617,15 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
         jPanel19 = new javax.swing.JPanel();
         jlblPrinterPort5 = new javax.swing.JLabel();
         jcboSerialScanner = new javax.swing.JComboBox();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jtxtCompany = new javax.swing.JTextField();
+        jtxtUserName = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jtxtLicenseNumber = new javax.swing.JTextField();
+        jtxtMachineID = new javax.swing.JTextField();
 
         jPanel13.setBorder(javax.swing.BorderFactory.createTitledBorder(AppLocal.getIntString("Label.CashMachine"))); // NOI18N
 
@@ -1111,13 +1129,46 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
+        jLabel9.setText("Te dhenat e Licensimit");
+        jLabel9.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        jLabel9.setMaximumSize(new java.awt.Dimension(64, 15));
+        jLabel9.setMinimumSize(new java.awt.Dimension(64, 15));
+
+        jLabel8.setText("Perdoruesi");
+
+        jLabel3.setText("Shoqeria");
+
+        jLabel11.setText("ID Makines");
+
+        jLabel4.setText("Licensa");
+
+        jtxtMachineID.setEditable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jtxtUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jtxtMachineID, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jtxtCompany, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jtxtLicenseNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1125,7 +1176,23 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtxtUserName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtMachineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtCompany, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtxtLicenseNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1205,6 +1272,7 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cboPrinters;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
@@ -1219,9 +1287,13 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -1268,7 +1340,11 @@ public class JPanelConfigGeneral extends javax.swing.JPanel implements PanelConf
     private javax.swing.JLabel jlblPrinterPort3;
     private javax.swing.JLabel jlblPrinterPort4;
     private javax.swing.JLabel jlblPrinterPort5;
+    private javax.swing.JTextField jtxtCompany;
+    private javax.swing.JTextField jtxtLicenseNumber;
     private javax.swing.JTextField jtxtMachineHostname;
+    private javax.swing.JTextField jtxtMachineID;
+    private javax.swing.JTextField jtxtUserName;
     private javax.swing.JPanel m_jDisplayParams;
     private javax.swing.JPanel m_jPrinterParams1;
     private javax.swing.JPanel m_jPrinterParams2;
