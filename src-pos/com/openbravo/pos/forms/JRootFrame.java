@@ -44,7 +44,7 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
     private JRootApp m_rootapp;
     private AppProperties m_props;
 
-    public static final int TOTAL_RUNS = 50;
+    public static final int TOTAL_RUNS = 100;
     public static final int TIMES_RUN = 0;
     public static final String PREF_KEY = "exec_time";
     
@@ -95,7 +95,7 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
                             + "Per me shume kontaktoni : info@acme-tech.net",
                             "Informacion rreth licenses",
                     javax.swing.JOptionPane.DEFAULT_OPTION);
-                }else if(execTimes == 0) {
+                }else if(execTimes == 0 || execTimes < 0) {
                     m_rootapp.tryToClose();
                 } else {
                     javax.swing.JOptionPane.showConfirmDialog((java.awt.Component) null,
@@ -123,7 +123,7 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
     public int RegistryValue() {
 
         // HKLM\Software\JavaSoft\Prefs\
-        Preferences systemPref = Preferences.systemRoot();
+        Preferences systemPref = Preferences.userNodeForPackage(this.getClass());
 
         int timesrun = systemPref.getInt(PREF_KEY,TIMES_RUN);
         systemPref.putInt(PREF_KEY, timesrun + 1);

@@ -4,48 +4,38 @@
         <image>Printer.Ticket.Logo</image>
         <line></line>
         <line>
-            <text align="center" length="42">Receipt sample.</text>
-        </line>
-        <line>
-            <text align="center" length="42">You can change this template</text>
-        </line>
-        <line>
-            <text align="center" length="42">in the resources panel</text>
-        </line>
-        <line></line>
-        <line>
             <text>Date:     ${inventoryrecord.printDate()}</text>
         </line>
         <line>
-            <text>Reason:   ${inventoryrecord.printReason()}</text>
+            <text>Veprimi:   ${inventoryrecord.printReason()}</text>
         </line>
         <line>
-            <text>Location: ${inventoryrecord.printLocation()}</text>
+            <text>Magazina: ${inventoryrecord.printLocation()}</text>
         </line>
         <line size="1">
             #if ($inventoryrecord.isInput())
-            <text align ="center" length="42">In</text>
+            <text align ="center" length="42">Hyrje</text>
             #else
-            <text align ="center" length="42">Out</text>
+            <text align ="center" length="42">Dalje</text>
             #end
         </line>
-        <line></line>    
+        <line></line>
         <line>
-            <text align ="left" length="17">Item</text>
-            <text align ="right" length="10">Price</text>
+            <text align ="left" length="17">Artikulli</text>
+            <text align ="right" length="10">Cmimi</text>
             <text align ="right" length="5"></text>
-            <text align ="right" length="10">Value</text>
-        </line>      
+            <text align ="right" length="10">Vlera</text>
+        </line>
         <line>
             <text>------------------------------------------</text>
-        </line>   
+        </line>
         #foreach ($inventoryline in $inventoryrecord.getLines())
         <line>
             <text align ="left" length="17">${inventoryline.printName()}</text>
             <text align ="right" length="10">${inventoryline.printPrice()}</text>
             <text align ="right" length="5">x${inventoryline.printMultiply()}</text>
             <text align ="right" length="10">${inventoryline.printSubValue()}</text>
-        </line> 
+        </line>
         #if ($inventoryline.productAttSetInstId)
         <line>
 	        <text align ="left" length="42">    ${inventoryline.productAttSetInstDesc}</text>
@@ -54,10 +44,10 @@
         #end
         <line>
             <text>------------------------------------------</text>
-        </line>   
-        <line></line>            
+        </line>
+        <line></line>
         <line>
-            <text align="center" length="42">Thank you for your visit.</text>
-        </line>   
+            <text align="center" length="42">Faleminderit.</text>
+        </line>
     </ticket>
 </output>
