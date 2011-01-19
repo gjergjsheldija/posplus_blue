@@ -24,7 +24,7 @@
 	<import value="net.sf.jasperreports.engine.data.*" />
 
 	<parameter name="ARG" isForPrompting="false" class="java.lang.Object"/>
-	<queryString><![CDATA[select * from cust_statement order by CUSTOMERID,DATENEW,ID]]></queryString>
+	<queryString><![CDATA[select * from CUST_STATEMENT order by CUSTOMERID,DATENEW,ID]]></queryString>
 
 	<field name="CUSTOMERID" class="java.lang.String"/>
 	<field name="ID" class="java.lang.String"/>

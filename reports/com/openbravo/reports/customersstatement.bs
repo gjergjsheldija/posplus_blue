@@ -23,7 +23,7 @@ report.setTitleKey("Menu.CustomersStatement");
 report.setReport("/com/openbravo/reports/customersstatement");
 report.setResourceBundle("com/openbravo/reports/customersstatement_messages");
 
-report.setSentence("select * from cust_statement Where ?(QBF_FILTER) order by  CUSTOMERID, DATENEW,ID ");
+report.setSentence("select * from CUST_STATEMENT Where ?(QBF_FILTER) order by  CUSTOMERID, DATENEW,ID ");
 report.addParameter("CUSTOMERSID");
 report.addParameter("NAME");
 report.addQBFFilter(new com.openbravo.pos.reports.JParamsCustomer());

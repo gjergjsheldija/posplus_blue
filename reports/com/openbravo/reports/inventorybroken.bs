@@ -29,6 +29,8 @@ report.setSentence("SELECT " +
                 "PRODUCTS.REFERENCE, " +
                 "PRODUCTS.NAME AS NAME, " +
                 "PRODUCTS.CATEGORY, " +
+                "PRODUCTS.PRICEBUY, " +
+                "PRODUCTS.PRICESELL, " +
                 "CATEGORIES.NAME AS CATEGORYNAME, " +
                 "SUM(STOCKCURRENT.UNITS) AS UNITS, " +
                 "COALESCE(STOCKLEVEL.STOCKSECURITY, 0) AS STOCKSECURITY, " +
@@ -41,7 +43,7 @@ report.setSentence("SELECT " +
                 "WHERE ?(QBF_FILTER) " +
                 "GROUP BY STOCKCURRENT.LOCATION, LOCATIONS.NAME, PRODUCTS.REFERENCE, PRODUCTS.NAME, PRODUCTS.CATEGORY, CATEGORIES.NAME, STOCKLEVEL.STOCKSECURITY, STOCKLEVEL.STOCKMAXIMUM " +
                 "HAVING STOCKLEVEL.STOCKSECURITY IS NOT NULL AND STOCKLEVEL.STOCKSECURITY >= SUM(STOCKCURRENT.UNITS) " +
-                "ORDER BY CATEGORIES.NAME, PRODUCTS.NAME, STOCKCURRENT.LOCATION");
+                "ORDER BY STOCKCURRENT.LOCATION, CATEGORIES.NAME, PRODUCTS.NAME ");
 report.addParameter("PRODUCTS.NAME");
 report.addParameter("PRODUCTS.PRICEBUY");
 report.addParameter("PRODUCTS.PRICESELL");
@@ -56,6 +58,8 @@ report.addField("LOCATIONNAME", com.openbravo.data.loader.Datas.STRING);
 report.addField("REFERENCE", com.openbravo.data.loader.Datas.STRING);
 report.addField("NAME", com.openbravo.data.loader.Datas.STRING);
 report.addField("CATEGORY", com.openbravo.data.loader.Datas.STRING);
+report.addField("PRICEBUY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("PRICESELL", com.openbravo.data.loader.Datas.DOUBLE);
 report.addField("CATEGORYNAME", com.openbravo.data.loader.Datas.STRING);
 report.addField("UNITS", com.openbravo.data.loader.Datas.DOUBLE);
 report.addField("STOCKSECURITY", com.openbravo.data.loader.Datas.DOUBLE);

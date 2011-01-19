@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<output>
+
+    <ticket>
+
+        #if (${supply.ticketType} == 0)
+        <line>
+            <text bold="true">Raporti i Furnizimit per dt. : </text>
+            <text bold="true">${supply.printDate()}</text>
+        </line>
+        #end
+
+        #if (${supply.ticketType} == 1)
+        <line>
+            <text bold="true">Kerkese per Furnizim per dt. : </text>
+            <text bold="true">${supply.printDate()}</text>
+        </line>
+        #end
+
+        <line>
+            <text align ="left" length="17">Artikulli</text>
+            <text align ="right" length="10">Sasia</text>
+            <text align ="right" length="5"></text>
+            <text align ="right" length="10">Cmimi</text>
+        </line>
+
+        <line>
+            <text>------------------------------------------</text>
+        </line>
+
+        #foreach ($line in $supply.getSupplyLines())
+        <line>
+            <text align="left" length="17">${line.printArticleName()}</text>
+            <text align="right" length="10">${line.printUnits()}</text>
+            <text align="right" length="5"></text>
+            <text align="right" length="10">${line.printPrice()}</text>
+        </line>
+        #end
+
+        <line>
+            <text>------------------------------------------</text>
+        </line>
+
+        <line size="1">
+            <text align ="left" length="32" bold="true">Totali</text>
+            <text align ="right" length="10" bold="true">${supply.printSuppliesTotal()}</text>
+        </line>
+
+    </ticket>
+
+</output>
