@@ -90,7 +90,7 @@ public class DataLogicPresenceManagement extends BeanFactoryDataSingle {
         };
 
         tbreaks = new TableDefinition(s
-            , "Breaks"
+            , "BREAKS"
             , new String[] { "ID", "NAME", "NOTES", "VISIBLE"}
             , new String[] { "ID", AppLocal.getIntString("label.epm.employee"), AppLocal.getIntString("label.epm.notes"), "VISIBLE"}
             , new Datas[] { Datas.STRING, Datas.STRING, Datas.STRING, Datas.BOOLEAN}
@@ -99,7 +99,7 @@ public class DataLogicPresenceManagement extends BeanFactoryDataSingle {
         );
 
          tleaves = new TableDefinition(s
-            , "Leaves"
+            , "LEAVES"
             , new String[] { "ID", "PPLID", "NAME", "STARTDATE", "ENDDATE", "NOTES"}
             , new String[] { "ID", AppLocal.getIntString("label.epm.employee.id"), AppLocal.getIntString("label.epm.employee"), AppLocal.getIntString("Label.StartDate"), AppLocal.getIntString("Label.EndDate"), AppLocal.getIntString("label.notes")}
             , new Datas[] { Datas.STRING, Datas.STRING, Datas.STRING, Datas.TIMESTAMP, Datas.TIMESTAMP, Datas.STRING}
