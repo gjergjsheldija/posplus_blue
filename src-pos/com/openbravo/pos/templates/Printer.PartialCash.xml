@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <output>
     <ticket>
         <image>Printer.Ticket.Logo</image>
         <line></line>
         <line size="1">
-            <text align ="center" length="42" bold="true">Mbyllje parciale</text>
+            <text align ="center" length="42" bold="true">Mbydhja Parciale e Arkes</text>
         </line>
         <line></line>
         <line>
-            <text bold="true">Pagesa</text>
+            <text bold="true" length="42">Raporti i Pagesave</text>
         </line>
         <line>
             <text align ="right" length="42">Totali</text>
@@ -63,25 +62,32 @@
             <text align ="right" length="10" bold="true">${payments.printSalesBase()}</text>
         </line>
         <line size="1">
-            <text align ="left" length="22" bold="true">Totali</text>
+            <text align ="left" length="32" bold="true">Taksa</text>
             <text align ="right" length="10" bold="true">${payments.printSalesTaxes()}</text>
+        </line>
+        <line size="1">
+            <text align ="left" length="32" bold="true">Totali</text>
             <text align ="right" length="10" bold="true">${payments.printSalesTotal()}</text>
         </line>
         <line></line>
         <line>
-            <text length="18">Makina:</text>
+            <text length="18">Perdoruesi:</text>
+            <text>${payments.printUserName()}</text>
+        </line>
+        <line>
+            <text length="18">Arka:</text>
             <text>${payments.printHost()}</text>
         </line>
         <line>
-            <text length="18">Sekuenca</text>
+            <text length="18">Sekuenca:</text>
             <text length="24" align="right">${payments.printSequence()}</text>
         </line>
         <line>
-            <text length="18">Data fillim:</text>
+            <text length="18">Data e Fillimit:</text>
             <text length="24" align="right">${payments.printDateStart()}</text>
         </line>
         <line>
-            <text length="18">Data fund:</text>
+            <text length="18">Data e Fundit:</text>
             <text length="24" align="right">${payments.printDateEnd()}</text>
         </line>
     </ticket>

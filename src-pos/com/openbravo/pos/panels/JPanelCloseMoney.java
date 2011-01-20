@@ -170,6 +170,8 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
         jColumns.getColumn(0).setResizable(false);
         jColumns.getColumn(1).setPreferredWidth(100);
         jColumns.getColumn(1).setResizable(false);
+
+        m_jCloseCash.setEnabled(m_App.getAppUserView().getUser().hasPermission("sales.CloseCash"));
     }   
     
     private void printPayments(String report) {

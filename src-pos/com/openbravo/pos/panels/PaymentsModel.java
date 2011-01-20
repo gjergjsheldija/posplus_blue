@@ -1,21 +1,20 @@
 //    Openbravo POS is a point of sales application designed for touch screens.
-//    Copyright (C) 2007-2009 Openbravo, S.L.
-//    http://www.openbravo.com/product/pos
+//    Copyright (C) 2007-2008 Openbravo, S.L.
+//    http://sourceforge.net/projects/openbravopos
 //
-//    This file is part of Openbravo POS.
-//
-//    Openbravo POS is free software: you can redistribute it and/or modify
+//    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
+//    the Free Software Foundation; either version 2 of the License, or
 //    (at your option) any later version.
 //
-//    Openbravo POS is distributed in the hope that it will be useful,
+//    This program is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Openbravo POS.  If not, see <http://www.gnu.org/licenses/>.
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package com.openbravo.pos.panels;
 
@@ -36,125 +35,219 @@ public class PaymentsModel {
     private String m_sHost;
     private int m_iSeq;
     private Date m_dDateStart;
-    private Date m_dDateEnd;       
-            
+    private Date m_dDateEnd;
+
     private Integer m_iPayments;
     private Double m_dPaymentsTotal;
     private java.util.List<PaymentsLine> m_lpayments;
-    
+
     private final static String[] PAYMENTHEADERS = {"Label.Payment", "label.totalcash"};
-    
+
     private Integer m_iSales;
     private Double m_dSalesBase;
     private Double m_dSalesTaxes;
     private java.util.List<SalesLine> m_lsales;
-    
+
+    private String m_sUserName;
+
     private final static String[] SALEHEADERS = {"label.taxcash", "label.totalcash"};
 
     private PaymentsModel() {
-    }    
-    
+    }
+
     public static PaymentsModel emptyInstance() {
-        
+
         PaymentsModel p = new PaymentsModel();
-        
+
         p.m_iPayments = new Integer(0);
         p.m_dPaymentsTotal = new Double(0.0);
         p.m_lpayments = new ArrayList<PaymentsLine>();
-        
+
         p.m_iSales = null;
         p.m_dSalesBase = null;
         p.m_dSalesTaxes = null;
         p.m_lsales = new ArrayList<SalesLine>();
-        
+        p.m_sUserName = null;
+
         return p;
     }
-    
+
     public static PaymentsModel loadInstance(AppView app) throws BasicException {
-        
+
         PaymentsModel p = new PaymentsModel();
-        
+
         // Propiedades globales
         p.m_sHost = app.getProperties().getHost();
         p.m_iSeq = app.getActiveCashSequence();
         p.m_dDateStart = app.getActiveCashDateStart();
         p.m_dDateEnd = null;
-        
-        
-        // Pagos
-        Object[] valtickets = (Object []) new StaticSentence(app.getSession()
-            , "SELECT COUNT(*), SUM(PAYMENTS.TOTAL) " +
-              "FROM PAYMENTS, RECEIPTS " +
-              "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID AND RECEIPTS.MONEY = ?"
-            , SerializerWriteString.INSTANCE
-            , new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}))
-            .find(app.getActiveCashIndex());
-            
-        if (valtickets == null) {
-            p.m_iPayments = new Integer(0);
-            p.m_dPaymentsTotal = new Double(0.0);
+        p.m_sUserName = app.getAppUserView().getUser().getName();
+
+        //Pagos
+        if(app.getAppUserView().getUser().hasPermission("sales.CloseCash") != true) {
+            PreparedSentence ps = new PreparedSentence(app.getSession()
+                    , "SELECT COUNT(*), SUM(PAYMENTS.TOTAL) " +
+                        "FROM PAYMENTS, RECEIPTS,TICKETS " +
+                        "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID " +
+                        "AND TICKETS.ID =  RECEIPTS.ID " +
+                        "AND RECEIPTS.MONEY = ? " +
+                        "AND TICKETS.PERSON = ? "
+                    , new SerializerWriteBasic(new Datas[]{ Datas.STRING, Datas.STRING})
+                    , new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}));
+
+            Object[] valtickets = (Object []) ps.find(new Object[]{
+                    app.getActiveCashIndex(),
+                    app.getAppUserView().getUser().getUserInfo().getId()
+            });
+
+            if (valtickets == null) {
+                p.m_iPayments = new Integer(0);
+                p.m_dPaymentsTotal = new Double(0.0);
+            } else {
+                p.m_iPayments = (Integer) valtickets[0];
+                p.m_dPaymentsTotal = (Double) valtickets[1];
+            }
         } else {
-            p.m_iPayments = (Integer) valtickets[0];
-            p.m_dPaymentsTotal = (Double) valtickets[1];
-        }  
-        
-        List l = new StaticSentence(app.getSession()            
-            , "SELECT PAYMENTS.PAYMENT, SUM(PAYMENTS.TOTAL) " +
-              "FROM PAYMENTS, RECEIPTS " +
-              "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID AND RECEIPTS.MONEY = ? " +
-              "GROUP BY PAYMENTS.PAYMENT"
-            , SerializerWriteString.INSTANCE
-            , new SerializerReadClass(PaymentsModel.PaymentsLine.class)) //new SerializerReadBasic(new Datas[] {Datas.STRING, Datas.DOUBLE}))
-            .list(app.getActiveCashIndex()); 
-        
-        if (l == null) {
-            p.m_lpayments = new ArrayList();
+            PreparedSentence ps = new PreparedSentence(app.getSession()
+                    , "SELECT COUNT(*), SUM(PAYMENTS.TOTAL) " +
+                        "FROM PAYMENTS, RECEIPTS,TICKETS " +
+                        "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID " +
+                        "AND TICKETS.ID =  RECEIPTS.ID " +
+                        "AND RECEIPTS.MONEY = ? "
+                    , new SerializerWriteBasic(new Datas[]{ Datas.STRING})
+                    , new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}));
+
+            Object[] valtickets = (Object []) ps.find(new Object[]{
+                    app.getActiveCashIndex()
+            });
+
+            if (valtickets == null) {
+                p.m_iPayments = new Integer(0);
+                p.m_dPaymentsTotal = new Double(0.0);
+            } else {
+                p.m_iPayments = (Integer) valtickets[0];
+                p.m_dPaymentsTotal = (Double) valtickets[1];
+            }
+        }
+
+        if(app.getAppUserView().getUser().hasPermission("sales.CloseCash") != true) {
+            List l = new StaticSentence(app.getSession()
+                , "SELECT PAYMENTS.PAYMENT, SUM(PAYMENTS.TOTAL) " +
+                  "FROM PAYMENTS, RECEIPTS,TICKETS  " +
+                  "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID AND RECEIPTS.MONEY = ? " +
+                  "AND TICKETS.ID =  RECEIPTS.ID " +
+                  "AND TICKETS.PERSON = ? " +
+                  "GROUP BY PAYMENTS.PAYMENT"
+                , new SerializerWriteBasic(new Datas[]{ Datas.STRING, Datas.STRING})
+                , new SerializerReadClass(PaymentsModel.PaymentsLine.class)) //new SerializerReadBasic(new Datas[] {Datas.STRING, Datas.DOUBLE}))
+                .list(new Object[] {app.getActiveCashIndex(),app.getAppUserView().getUser().getUserInfo().getId() } );
+
+            if (l == null) {
+                p.m_lpayments = new ArrayList();
+            } else {
+                p.m_lpayments = l;
+            }
         } else {
-            p.m_lpayments = l;
-        }        
-        
+            List l = new StaticSentence(app.getSession()
+                , "SELECT PAYMENTS.PAYMENT, SUM(PAYMENTS.TOTAL) " +
+                  "FROM PAYMENTS, RECEIPTS,TICKETS  " +
+                  "WHERE PAYMENTS.RECEIPT = RECEIPTS.ID AND RECEIPTS.MONEY = ? " +
+                  "AND TICKETS.ID =  RECEIPTS.ID " +
+                  "GROUP BY PAYMENTS.PAYMENT"
+                , new SerializerWriteBasic(new Datas[]{ Datas.STRING })
+                , new SerializerReadClass(PaymentsModel.PaymentsLine.class)) //new SerializerReadBasic(new Datas[] {Datas.STRING, Datas.DOUBLE}))
+                .list(new Object[] {app.getActiveCashIndex() } );
+
+            if (l == null) {
+                p.m_lpayments = new ArrayList();
+            } else {
+                p.m_lpayments = l;
+            }
+        }
+
+
         // Sales
-        Object[] recsales = (Object []) new StaticSentence(app.getSession(),
-            "SELECT COUNT(DISTINCT RECEIPTS.ID), SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) " +
-            "FROM RECEIPTS, TICKETLINES WHERE RECEIPTS.ID = TICKETLINES.TICKET AND RECEIPTS.MONEY = ?",
-            SerializerWriteString.INSTANCE,
-            new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}))
-            .find(app.getActiveCashIndex());
-        if (recsales == null) {
-            p.m_iSales = null;
-            p.m_dSalesBase = null;
+        if(app.getAppUserView().getUser().hasPermission("sales.CloseCash") != true) {
+            Object[] recsales = (Object []) new StaticSentence(app.getSession(),
+                "SELECT COUNT(DISTINCT RECEIPTS.ID), SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) " +
+                "FROM RECEIPTS, TICKETLINES, TICKETS WHERE RECEIPTS.ID = TICKETLINES.TICKET AND RECEIPTS.MONEY = ?" +
+                "AND TICKETS.ID =  RECEIPTS.ID " +
+                "AND TICKETS.PERSON = ? ",
+                new SerializerWriteBasic(new Datas[]{ Datas.STRING, Datas.STRING}),
+                new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}))
+                .find(new Object[] {app.getActiveCashIndex(),app.getAppUserView().getUser().getUserInfo().getId() } );
+            if (recsales == null) {
+                p.m_iSales = null;
+                p.m_dSalesBase = null;
+            } else {
+                p.m_iSales = (Integer) recsales[0];
+                p.m_dSalesBase = (Double) recsales[1];
+            }
         } else {
-            p.m_iSales = (Integer) recsales[0];
-            p.m_dSalesBase = (Double) recsales[1];
-        }             
-        
+            Object[] recsales = (Object []) new StaticSentence(app.getSession(),
+                "SELECT COUNT(DISTINCT RECEIPTS.ID), SUM(TICKETLINES.UNITS * TICKETLINES.PRICE) " +
+                "FROM RECEIPTS, TICKETLINES, TICKETS WHERE RECEIPTS.ID = TICKETLINES.TICKET AND RECEIPTS.MONEY = ?" +
+                "AND TICKETS.ID =  RECEIPTS.ID ",
+                new SerializerWriteBasic(new Datas[]{ Datas.STRING }),
+                new SerializerReadBasic(new Datas[] {Datas.INT, Datas.DOUBLE}))
+                .find(new Object[] {app.getActiveCashIndex()  } );
+            if (recsales == null) {
+                p.m_iSales = null;
+                p.m_dSalesBase = null;
+            } else {
+                p.m_iSales = (Integer) recsales[0];
+                p.m_dSalesBase = (Double) recsales[1];
+            }
+        }
+
+
         // Taxes
         Object[] rectaxes = (Object []) new StaticSentence(app.getSession(),
             "SELECT SUM(TAXLINES.AMOUNT) " +
-            "FROM RECEIPTS, TAXLINES WHERE RECEIPTS.ID = TAXLINES.RECEIPT AND RECEIPTS.MONEY = ?"
-            , SerializerWriteString.INSTANCE
+            "FROM RECEIPTS, TAXLINES, TICKETS WHERE RECEIPTS.ID = TAXLINES.RECEIPT AND RECEIPTS.MONEY = ?" +
+            "AND TICKETS.ID =  RECEIPTS.ID " 
+            , new SerializerWriteBasic(new Datas[]{ Datas.STRING })
             , new SerializerReadBasic(new Datas[] {Datas.DOUBLE}))
-            .find(app.getActiveCashIndex());            
+             .find(new Object[] {app.getActiveCashIndex()} );
         if (rectaxes == null) {
             p.m_dSalesTaxes = null;
         } else {
             p.m_dSalesTaxes = (Double) rectaxes[0];
-        } 
-                
-        List<SalesLine> asales = new StaticSentence(app.getSession(),
-                "SELECT TAXCATEGORIES.NAME, SUM(TAXLINES.AMOUNT) " +
-                "FROM RECEIPTS, TAXLINES, TAXES, TAXCATEGORIES WHERE RECEIPTS.ID = TAXLINES.RECEIPT AND TAXLINES.TAXID = TAXES.ID AND TAXES.CATEGORY = TAXCATEGORIES.ID " +
-                "AND RECEIPTS.MONEY = ?" +
-                "GROUP BY TAXCATEGORIES.NAME"
-                , SerializerWriteString.INSTANCE
-                , new SerializerReadClass(PaymentsModel.SalesLine.class))
-                .list(app.getActiveCashIndex());
-        if (asales == null) {
-            p.m_lsales = new ArrayList<SalesLine>();
-        } else {
-            p.m_lsales = asales;
         }
-         
+
+        if(app.getAppUserView().getUser().hasPermission("sales.CloseCash") != true) {
+            List<SalesLine> asales = new StaticSentence(app.getSession(),
+                    "SELECT TAXCATEGORIES.NAME, SUM(TAXLINES.AMOUNT) " +
+                    "FROM RECEIPTS, TAXLINES, TICKETS, TAXES, TAXCATEGORIES WHERE RECEIPTS.ID = TAXLINES.RECEIPT AND TAXLINES.TAXID = TAXES.ID AND TAXES.CATEGORY = TAXCATEGORIES.ID " +
+                    "AND RECEIPTS.MONEY = ?" +
+                    "AND TICKETS.ID =  RECEIPTS.ID " +
+                    "AND TICKETS.PERSON = ? " +
+                    "GROUP BY TAXCATEGORIES.NAME"
+                    , new SerializerWriteBasic(new Datas[]{ Datas.STRING, Datas.STRING})
+                    , new SerializerReadClass(PaymentsModel.SalesLine.class))
+                    .list(new Object[] {app.getActiveCashIndex(),app.getAppUserView().getUser().getUserInfo().getId() } );
+            if (asales == null) {
+                p.m_lsales = new ArrayList<SalesLine>();
+            } else {
+                p.m_lsales = asales;
+            }
+        } else {
+            List<SalesLine> asales = new StaticSentence(app.getSession(),
+                    "SELECT TAXCATEGORIES.NAME, SUM(TAXLINES.AMOUNT) " +
+                    "FROM RECEIPTS, TAXLINES, TICKETS, TAXES, TAXCATEGORIES WHERE RECEIPTS.ID = TAXLINES.RECEIPT AND TAXLINES.TAXID = TAXES.ID AND TAXES.CATEGORY = TAXCATEGORIES.ID " +
+                    "AND RECEIPTS.MONEY = ?" +
+                    "AND TICKETS.ID =  RECEIPTS.ID " +
+                    "GROUP BY TAXCATEGORIES.NAME"
+                    , new SerializerWriteBasic(new Datas[]{ Datas.STRING })
+                    , new SerializerReadClass(PaymentsModel.SalesLine.class))
+                    .list(new Object[] {app.getActiveCashIndex() } );
+            if (asales == null) {
+                p.m_lsales = new ArrayList<SalesLine>();
+            } else {
+                p.m_lsales = asales;
+            }
+        }
+
         return p;
     }
 
@@ -176,10 +269,15 @@ public class PaymentsModel {
     public void setDateEnd(Date dValue) {
         m_dDateEnd = dValue;
     }
+    
     public Date getDateEnd() {
         return m_dDateEnd;
     }
-    
+
+    public String printUserName() {
+        return m_sUserName;
+    }
+
     public String printHost() {
         return m_sHost;
     }
@@ -191,41 +289,41 @@ public class PaymentsModel {
     }
     public String printDateEnd() {
         return Formats.TIMESTAMP.formatValue(m_dDateEnd);
-    }  
-    
+    }
+
     public String printPayments() {
         return Formats.INT.formatValue(m_iPayments);
     }
 
     public String printPaymentsTotal() {
         return Formats.CURRENCY.formatValue(m_dPaymentsTotal);
-    }     
-    
+    }
+
     public List<PaymentsLine> getPaymentLines() {
         return m_lpayments;
     }
-    
+
     public int getSales() {
         return m_iSales == null ? 0 : m_iSales.intValue();
-    }    
+    }
     public String printSales() {
         return Formats.INT.formatValue(m_iSales);
     }
     public String printSalesBase() {
         return Formats.CURRENCY.formatValue(m_dSalesBase);
-    }     
+    }
     public String printSalesTaxes() {
         return Formats.CURRENCY.formatValue(m_dSalesTaxes);
-    }     
-    public String printSalesTotal() {            
+    }
+    public String printSalesTotal() {
         return Formats.CURRENCY.formatValue((m_dSalesBase == null || m_dSalesTaxes == null)
                 ? null
                 : m_dSalesBase + m_dSalesTaxes);
-    }     
+    }
     public List<SalesLine> getSaleLines() {
         return m_lsales;
     }
-    
+
     public AbstractTableModel getPaymentsModel() {
         return new AbstractTableModel() {
             public String getColumnName(int column) {
@@ -244,22 +342,22 @@ public class PaymentsModel {
                 case 1: return l.getValue();
                 default: return null;
                 }
-            }  
+            }
         };
     }
-    
+
     public static class SalesLine implements SerializableRead {
-        
+
         private String m_SalesTaxName;
         private Double m_SalesTaxes;
-        
+
         public void readValues(DataRead dr) throws BasicException {
             m_SalesTaxName = dr.getString(1);
             m_SalesTaxes = dr.getDouble(2);
         }
         public String printTaxName() {
             return m_SalesTaxName;
-        }      
+        }
         public String printTaxes() {
             return Formats.CURRENCY.formatValue(m_SalesTaxes);
         }
@@ -268,7 +366,7 @@ public class PaymentsModel {
         }
         public Double getTaxes() {
             return m_SalesTaxes;
-        }        
+        }
     }
 
     public AbstractTableModel getSalesModel() {
@@ -289,20 +387,20 @@ public class PaymentsModel {
                 case 1: return l.getTaxes();
                 default: return null;
                 }
-            }  
+            }
         };
     }
-    
+
     public static class PaymentsLine implements SerializableRead {
-        
+
         private String m_PaymentType;
         private Double m_PaymentValue;
-        
+
         public void readValues(DataRead dr) throws BasicException {
             m_PaymentType = dr.getString(1);
             m_PaymentValue = dr.getDouble(2);
         }
-        
+
         public String printType() {
             return AppLocal.getIntString("transpayment." + m_PaymentType);
         }
@@ -314,6 +412,6 @@ public class PaymentsModel {
         }
         public Double getValue() {
             return m_PaymentValue;
-        }        
+        }
     }
 }    
