@@ -518,7 +518,7 @@ public class JPanelCloseMoney extends JPanel implements JPanelView, BeanFactoryA
                 new InternetAddress(m_App.getProperties().getProperty("mail.sendto")));
             message.setSubject("Cash closed performed on: " + m_App.getProperties().getHost());
             message.setText(
-                "OpenbravoPOS closed cash on: " + dNow + " with a total of: " + m_PaymentsToClose +" €"  );
+                "POSplus BLUE closed cash on: " + dNow + " with a total of: " + m_PaymentsToClose +" €"  );
 
             // Send message
             Transport t = session.getTransport("smtp");
