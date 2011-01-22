@@ -36,6 +36,7 @@ import com.openbravo.data.loader.SerializerWriteString;
 import com.openbravo.data.loader.Session;
 import com.openbravo.data.loader.StaticSentence;
 import com.openbravo.data.loader.Transaction;
+import com.openbravo.pos.suppliers.SupplierInfoExt;
 import com.openbravo.pos.customers.CustomerInfoExt;
 import com.openbravo.pos.forms.BeanFactoryDataSingle;
 import com.openbravo.pos.inventory.TaxCategoryInfo;

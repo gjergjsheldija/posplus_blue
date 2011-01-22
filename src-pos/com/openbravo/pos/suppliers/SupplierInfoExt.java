@@ -130,7 +130,7 @@ public class SupplierInfoExt extends SupplierInfo {
                 curdate = d;
             }
         } else if (RoundUtils.compare(curdebt, 0.0) == 0) {
-            curdebt = null;
+            curdebt = 0.0;
             curdate = null;
         } else { // < 0
             curdate = null;

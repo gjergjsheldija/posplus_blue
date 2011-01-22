@@ -30,6 +30,7 @@ import com.openbravo.basic.BasicException;
 import com.openbravo.data.loader.LocalRes;
 import com.openbravo.pos.customers.CustomerInfoExt;
 import com.openbravo.pos.payment.PaymentInfoMagcard;
+import com.openbravo.pos.suppliers.SupplierInfoExt;
 import com.openbravo.pos.util.StringUtils;
 
 /**
@@ -61,6 +62,7 @@ public class TicketInfo implements SerializableRead, Externalizable {
 
     // MSL
     private java.util.Date m_dDueDate;
+    private SupplierInfoExt m_Supplier;
 
     /** Creates new TicketModel */
     public TicketInfo() {
@@ -258,6 +260,23 @@ public class TicketInfo implements SerializableRead, Externalizable {
         }
     }
     
+
+    public SupplierInfoExt getSupplier() {
+        return m_Supplier;
+    }
+
+    public void setSupplier(SupplierInfoExt value) {
+        m_Supplier = value;
+    }
+
+    public String getSupplierId() {
+        if (m_Supplier == null) {
+            return null;
+        } else {
+            return m_Supplier.getId();
+        }
+    }
+
     public String getTransactionID(){
         return (getPayments().size()>0)
             ? ( getPayments().get(getPayments().size()-1) ).getTransactionID()

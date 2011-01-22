@@ -472,7 +472,7 @@ public class JTicketsBagRestaurantRes extends javax.swing.JPanel implements Edit
         finder.search(customer);
         finder.setVisible(true);
         
-        CustomerInfo c = finder.getSelectedCustomer(); 
+        CustomerInfo c = finder.getSelectedCustomer();
         
         if (c == null) {       
             assignCustomer(new CustomerInfo(null));

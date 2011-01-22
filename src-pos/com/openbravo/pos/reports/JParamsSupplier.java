@@ -24,12 +24,13 @@ import com.openbravo.data.loader.Datas;
 import com.openbravo.data.loader.QBFCompareEnum;
 import com.openbravo.data.loader.SerializerWrite;
 import com.openbravo.data.loader.SerializerWriteBasic;
-import com.openbravo.pos.customers.DataLogicCustomers;
-import com.openbravo.pos.customers.CustomerInfoExt;
+import com.openbravo.pos.suppliers.DataLogicSuppliers;
+import com.openbravo.pos.suppliers.JSupplierFinder;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.customers.CustomerInfo;
-import com.openbravo.pos.customers.JCustomerFinder;
 import com.openbravo.pos.forms.AppView;
+import com.openbravo.pos.suppliers.DataLogicSuppliers;
+import com.openbravo.pos.suppliers.SupplierInfo;
 import java.awt.Component;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -38,39 +39,39 @@ import javax.swing.event.DocumentListener;
  *
  * @author  adrianromero
  */
-public class JParamsCustomer extends javax.swing.JPanel implements ReportEditorCreator {
-    
-    private DataLogicCustomers dlCustomers;
-    private CustomerInfo currentcustomer;
-    
+public class JParamsSupplier extends javax.swing.JPanel implements ReportEditorCreator {
+
+    private DataLogicSuppliers dlSuppliers;
+    private SupplierInfo currentsupplier;
+
     /** Creates new form JParamsCustomer */
-    public JParamsCustomer() {
+    public JParamsSupplier() {
 
         initComponents();
-        
+
         jTextField1.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
-                currentcustomer = null;
+                currentsupplier = null;
             }
             public void removeUpdate(DocumentEvent e) {
-                currentcustomer = null;
+                currentsupplier = null;
             }
             public void changedUpdate(DocumentEvent e) {
-                currentcustomer = null;
+                currentsupplier = null;
             }
         });
     }
 
     public void init(AppView app) {
-        dlCustomers = (DataLogicCustomers) app.getBean("com.openbravo.pos.customers.DataLogicCustomers");
+        dlSuppliers = (DataLogicSuppliers) app.getBean("com.openbravo.pos.suppliers.DataLogicSuppliers");
     }
-    
+
     public void activate() throws BasicException {
-        
-        currentcustomer = null;
-        jTextField1.setText(null);        
+
+        currentsupplier = null;
+        jTextField1.setText(null);
     }
-            
+
     public SerializerWrite getSerializerWrite() {
         return new SerializerWriteBasic(new Datas[] {Datas.OBJECT, Datas.STRING, Datas.OBJECT, Datas.STRING});
     }
@@ -78,20 +79,20 @@ public class JParamsCustomer extends javax.swing.JPanel implements ReportEditorC
     public Component getComponent() {
         return this;
     }
-    
+
     public Object createValue() throws BasicException {
-        
-        if (currentcustomer == null) {
+
+        if (currentsupplier == null) {
             if (jTextField1.getText() == null || jTextField1.getText().equals("")) {
                 return new Object[] {QBFCompareEnum.COMP_NONE, null, QBFCompareEnum.COMP_NONE, null};
             } else {
                 return new Object[] {QBFCompareEnum.COMP_NONE, null, QBFCompareEnum.COMP_RE, jTextField1.getText()};
             }
         } else {
-            return new Object[] {QBFCompareEnum.COMP_EQUALS, currentcustomer.getId(), QBFCompareEnum.COMP_NONE, null};
+            return new Object[] {QBFCompareEnum.COMP_EQUALS, currentsupplier.getId(), QBFCompareEnum.COMP_NONE, null};
         }
-    }     
-    
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -104,11 +105,11 @@ public class JParamsCustomer extends javax.swing.JPanel implements ReportEditorC
         jTextField1 = new javax.swing.JTextField();
         btnCustomer = new javax.swing.JButton();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder(AppLocal.getIntString("label.bycustomer"))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(AppLocal.getIntString("label.bySupplier"))); // NOI18N
         setPreferredSize(new java.awt.Dimension(400, 60));
         setLayout(null);
 
-        jLabel1.setText(AppLocal.getIntString("label.customer")); // NOI18N
+        jLabel1.setText(AppLocal.getIntString("label.Supplier")); // NOI18N
         add(jLabel1);
         jLabel1.setBounds(20, 20, 120, 25);
         add(jTextField1);
@@ -121,28 +122,32 @@ public class JParamsCustomer extends javax.swing.JPanel implements ReportEditorC
             }
         });
         add(btnCustomer);
-        btnCustomer.setBounds(350, 20, 49, 25);
+        btnCustomer.setBounds(350, 20, 28, 25);
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pos_messages"); // NOI18N
+        getAccessibleContext().setAccessibleName(bundle.getString("label.Supplier")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomerActionPerformed
 
-        JCustomerFinder finder = JCustomerFinder.getCustomerFinder(this, dlCustomers);
-        finder.search(currentcustomer);
+        JSupplierFinder finder = JSupplierFinder.getSupplierFinder(this, dlSuppliers);
+        finder.search(currentsupplier);
         finder.setVisible(true);
-        currentcustomer = finder.getSelectedCustomer();
-        if (currentcustomer == null) {
+        currentsupplier = finder.getSelectedSupplier();
+        if (currentsupplier == null) {
             jTextField1.setText(null);
         } else {
-            jTextField1.setText(currentcustomer.getName());
+            jTextField1.setText(currentsupplier.getName());
         }
-        
+
     }//GEN-LAST:event_btnCustomerActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCustomer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
-    
+
 }
+

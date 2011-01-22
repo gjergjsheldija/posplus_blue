@@ -219,7 +219,7 @@ public class TaxesLogic {
         return getTaxInfo(tc.getID(), null);
     }
     
-    public TaxInfo getTaxInfo(TaxCategoryInfo tc, CustomerInfoExt customer) {  
+    public TaxInfo getTaxInfo(TaxCategoryInfo tc, CustomerInfoExt customer) {
         return getTaxInfo(tc.getID(), customer);
     }    
     
