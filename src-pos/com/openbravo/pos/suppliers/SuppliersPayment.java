@@ -544,7 +544,7 @@ public class SuppliersPayment extends javax.swing.JPanel implements JPanelView, 
             }
 
             printTicket(paymentdialog.isPrintSelected()
-                    ? "Printer.CustomerPaid"
+                    ? "Printer.SupplierPaid"
                     : "Printer.CustomerPaid2",
                     ticket, c);
         }
