@@ -44,6 +44,7 @@ public class TicketInfo implements SerializableRead, Externalizable {
     public static final int RECEIPT_NORMAL = 0;
     public static final int RECEIPT_REFUND = 1;
     public static final int RECEIPT_PAYMENT = 2;
+    public static final int SUPPLIER_PAYMENT = 3;
 
     private static DateFormat m_dateformat = new SimpleDateFormat("hh:mm");
 
@@ -513,3 +514,4 @@ public class TicketInfo implements SerializableRead, Externalizable {
         return Formats.CURRENCY.formatValue(new Double(getTotalPaid()));
     }
 }
+

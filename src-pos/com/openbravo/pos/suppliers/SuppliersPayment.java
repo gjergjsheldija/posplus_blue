@@ -500,7 +500,7 @@ public class SuppliersPayment extends javax.swing.JPanel implements JPanelView, 
 
             // Save the ticket
             TicketInfo ticket = new TicketInfo();
-            ticket.setTicketType(TicketInfo.RECEIPT_PAYMENT);
+            ticket.setTicketType(TicketInfo.SUPPLIER_PAYMENT);
 
             List<PaymentInfo> payments = paymentdialog.getSelectedPayments();
 

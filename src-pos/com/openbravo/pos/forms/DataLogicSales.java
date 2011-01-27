@@ -362,6 +362,9 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         case TicketInfo.RECEIPT_PAYMENT:
                             ticket.setTicketId(getNextTicketPaymentIndex().intValue());
                             break;
+                        case TicketInfo.SUPPLIER_PAYMENT:
+                            ticket.setTicketId(getNextTicketSupplierIndex().intValue());
+                            break;
                         default:
                             throw new BasicException();
                     }
@@ -541,8 +544,17 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 // Set Receipt Id
                 if (ticket.getTicketId() == 0) {
                     switch (ticket.getTicketType()) {
+                        case TicketInfo.RECEIPT_NORMAL:
+                            ticket.setTicketId(getNextTicketIndex().intValue());
+                            break;
+                        case TicketInfo.RECEIPT_REFUND:
+                            ticket.setTicketId(getNextTicketRefundIndex().intValue());
+                            break;
                         case TicketInfo.RECEIPT_PAYMENT:
                             ticket.setTicketId(getNextTicketPaymentIndex().intValue());
+                            break;
+                        case TicketInfo.SUPPLIER_PAYMENT:
+                            ticket.setTicketId(getNextTicketSupplierIndex().intValue());
                             break;
                         default:
                             throw new BasicException();
@@ -563,6 +575,19 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         } catch (IOException e) {
                             setBytes(4, null);
                         }
+                    }
+                });
+
+                //new ticket
+                new PreparedSentence(s, "INSERT INTO TICKETS (ID, TICKETTYPE, TICKETID, PERSON, SUPPLIER, DUEDATE) VALUES (?, ?, ?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
+
+                    public void writeValues() throws BasicException {
+                        setString(1, ticket.getId());
+                        setInt(2, ticket.getTicketType());
+                        setInt(3, ticket.getTicketId());
+                        setString(4, ticket.getUser().getId());
+                        setString(5, ticket.getSupplierId());
+                        setTimestamp(6, ticket.getDueDate());
                     }
                 });
 
@@ -682,6 +707,10 @@ public class DataLogicSales extends BeanFactoryDataSingle {
 
     public final Integer getNextTicketPaymentIndex() throws BasicException {
         return (Integer) s.DB.getSequenceSentence(s, "TICKETSNUM_PAYMENT").find();
+    }
+
+    public final Integer getNextTicketSupplierIndex() throws BasicException {
+        return (Integer) s.DB.getSequenceSentence(s, "TICKETSNUM_SUPPLIER").find();
     }
 
     public final SentenceList getProductCatQBF() {
