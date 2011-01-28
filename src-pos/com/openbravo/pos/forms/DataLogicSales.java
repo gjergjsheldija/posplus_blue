@@ -960,10 +960,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
         return new SentenceExecTransaction(s) {
             private Object units;
             private Object price;
-            private Object supplierId;
-            private Object date;
 
-            public int execInTransaction(Object params) throws BasicException {
+            public int execInTransaction(final Object params) throws BasicException {
                 int updateresult = ((Object[]) params)[5] == null // si ATTRIBUTESETINSTANCE_ID is null
                         ? new PreparedSentence(s, "UPDATE STOCKCURRENT SET UNITS = (UNITS + ?) WHERE LOCATION = ? AND PRODUCT = ? AND ATTRIBUTESETINSTANCE_ID IS NULL", new SerializerWriteBasicExt(stockdiaryDatas, new int[]{6, 3, 4})).exec(params)
                         : new PreparedSentence(s, "UPDATE STOCKCURRENT SET UNITS = (UNITS + ?) WHERE LOCATION = ? AND PRODUCT = ? AND ATTRIBUTESETINSTANCE_ID = ?", new SerializerWriteBasicExt(stockdiaryDatas, new int[]{6, 3, 4, 5})).exec(params);
@@ -984,16 +982,14 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     sparams = new Object[]{((Object[]) params)[0], ((Object[]) params)[13]};
                     i = new PreparedSentence(s, "UPDATE STOCKDIARY SET SUPPLIERID=? WHERE ID=?", new SerializerWriteBasicExt(new Datas[]{Datas.STRING, Datas.STRING}, new int[]{1, 0})).exec(sparams);
 
-                    date = ((Object[]) params)[1];
                     units = ((Object[]) params)[6];
                     price = ((Object[]) params)[7];
-                    supplierId = ((Object[]) params)[13];
 
                     getSupplierDebtUpdate().exec(new DataParams() {
                         public void writeValues() throws BasicException {
                             setDouble(1, new Double(units.toString()) * new Double(price.toString()));
-                            setObject(2, date );
-                            setString(3, supplierId.toString());
+                            setString(2, Formats.DATE.formatValue(((Object[]) params)[1]) );
+                            setString(3, Formats.STRING.formatValue(((Object[]) params)[13]));
                         }
                     });
 
