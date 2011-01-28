@@ -509,7 +509,7 @@ public class SuppliersPayment extends javax.swing.JPanel implements JPanelView, 
                 total += p.getTotal();
             }
 
-            payments.add(new PaymentInfoTicket(-total, "debtpaid"));
+            payments.add(new PaymentInfoTicket(total, "debtpaid"));
 
             ticket.setPayments(payments);
 
