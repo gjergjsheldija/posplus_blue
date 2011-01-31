@@ -401,22 +401,22 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                     }
                 });
 
-                // new receipt
-                new PreparedSentence(s, "INSERT INTO RECEIPTS (ID, MONEY, DATENEW, ATTRIBUTES) VALUES (?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
-
-                    public void writeValues() throws BasicException {
-                        setString(1, ticket.getId());
-                        setString(2, ticket.getActiveCash());
-                        setTimestamp(3, ticket.getDate());
-                        try {
-                            ByteArrayOutputStream o = new ByteArrayOutputStream();
-                            ticket.getProperties().storeToXML(o, AppLocal.APP_NAME, "UTF-8");
-                            setBytes(4, o.toByteArray());
-                        } catch (IOException e) {
-                            setBytes(4, null);
-                        }
-                    }
-                });
+//                // new receipt
+//                new PreparedSentence(s, "INSERT INTO RECEIPTS (ID, MONEY, DATENEW, ATTRIBUTES) VALUES (?, ?, ?, ?)", SerializerWriteParams.INSTANCE).exec(new DataParams() {
+//
+//                    public void writeValues() throws BasicException {
+//                        setString(1, ticket.getId());
+//                        setString(2, ticket.getActiveCash());
+//                        setTimestamp(3, ticket.getDate());
+//                        try {
+//                            ByteArrayOutputStream o = new ByteArrayOutputStream();
+//                            ticket.getProperties().storeToXML(o, AppLocal.APP_NAME, "UTF-8");
+//                            setBytes(4, o.toByteArray());
+//                        } catch (IOException e) {
+//                            setBytes(4, null);
+//                        }
+//                    }
+//                });
                 
                 SentenceExec ticketlineinsert = new PreparedSentence(s, "INSERT INTO TICKETLINES (TICKET, LINE, PRODUCT, ATTRIBUTESETINSTANCE_ID, UNITS, PRICE, TAXID, ATTRIBUTES) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", SerializerWriteBuilder.INSTANCE);
 
